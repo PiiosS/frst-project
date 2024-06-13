@@ -1,8 +1,8 @@
-
+import data.py
 import pymysql
 import requests
 
-connection = pymysql.connect(host='sql7.freemysqlhosting.net', user='sql7713483', password='qEvEcDrf1W', database='sql7713483')
+connection = pymysql.connect(host=data.HOST, user=data.USER, password=data.PASSWORD, database=data.DATABASE)
 cursor = connection.cursor()
 
 

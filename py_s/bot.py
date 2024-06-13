@@ -1,11 +1,13 @@
 import telebot
 import pymysql
 from datetime import date, timedelta
+import data
 
-bot = telebot.TeleBot('7205190640:AAFSEA1yM9lPe4eRy990mivTBT_aKVzCa_4')
-db_connection = pymysql.connect(host='sql7.freemysqlhosting.net', user='sql7713483', password='qEvEcDrf1W', database='sql7713483')
+bot = telebot.TeleBot(data.TOKEN)
+db_connection = pymysql.connect(host=data.HOST, user=data.USER, password=data.PASSWORD, database=data.DATABASE)
 db_cursor = db_connection.cursor()
 message=''
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
     bot.send_message(message.chat.id, "Привет, чем я могу тебе помочь?")
@@ -54,9 +56,14 @@ def get_next_day_data(message):
 def ksenia_msg(message):
     print('Отправляю 962847585')
     message_text = "Ксюша, тебе приходят сообщения от бота?"
+    img = open('cat.jpg', 'rb')
+    bot.send_photo(5169161016, img)
     bot.send_message(message.chat.id, message_text)
 
 @bot.message_handler(commands=['стоп'])
 def stop_msg(message):
+    print('Протокол "пока"')
+    message_text = "Ня, пока ❤️"
+    bot.send_message(message.chat.id, message_text)
     bot.stop_bot()
 bot.polling()
