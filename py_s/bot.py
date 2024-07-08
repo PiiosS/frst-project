@@ -5,7 +5,7 @@ import sdata
 import map
 import csv
 
-
+#testing
 bot = telebot.TeleBot(sdata.TOKEN)
 connection = pymysql.connect(host=sdata.HOST, user=sdata.USER, password=sdata.PASSWORD, database=sdata.DATABASE)
 cursor = connection.cursor()
