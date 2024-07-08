@@ -4,7 +4,6 @@ from datetime import datetime, date, timedelta
 import sdata
 import map
 import csv
-import id_groups
 
 
 bot = telebot.TeleBot(sdata.TOKEN)
@@ -55,6 +54,7 @@ def schedule_date(s_date, message):
 
 @bot.message_handler(commands=['group'])
 def go_group(message):
+    bot.send_message(message.chat.id,'Обновляю')
     try:
         map.update_groups()
         message_text = 'Список групп успешно обновлён'
@@ -64,6 +64,7 @@ def go_group(message):
 
 @bot.message_handler(commands=['teach'])
 def go_group(message):
+    bot.send_message(message.chat.id,'Обновляю')
     try:
         map.update_teachers()
         message_text = 'Список преподавателей успешно обновлён'
