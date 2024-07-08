@@ -94,6 +94,7 @@ def help_message(message):
     message_text="Для вывода данных на текущий день напиши /today, для вывода данных на следующий день напиши /next_day"
     bot.send_message(message.chat.id,message_text)
     log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
+
     #print('Гит не гитится, идея не идеется')
 
 @bot.message_handler(commands=['today'])

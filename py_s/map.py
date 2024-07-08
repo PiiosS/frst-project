@@ -55,6 +55,7 @@ def schedule():
     connection.close()
 
 
+
 def update_teachers():
     connection = conn()
     cursor = connection.cursor()
