@@ -4,6 +4,7 @@ from datetime import datetime, date, timedelta
 import sdata
 import map
 import csv
+import id_groups
 
 
 bot = telebot.TeleBot(sdata.TOKEN)
@@ -44,11 +45,29 @@ def schedule_date(s_date, message):
             message_text = "Данные на текущий день:\n"
             for row in rows:
                 sdate, pair, subject, signature, classroom, classroom_building, group_name = row
-                message_text += f"Дата: {sdate}, Время занятия: {pair}, Преподаватель: {signature}, Предмет: {subject}, Кабинет: {classroom}, Учебный корпус: {classroom_building}\n\n"
+                message_text += f"Дата: {sdate},\n Время занятия: {pair},\n Преподаватель: {signature},\n Предмет: {subject},\n Кабинет: {classroom},\n Учебный корпус: {classroom_building}\n\n"
         else:
             message_text = f"На {s_date} данных нет"
     except:
         message_text = f"На {s_date} данных нет"
+    bot.send_message(message.chat.id, message_text)
+    log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
+
+@bot.message_handler(commands=['group'])
+def go_group(message):
+    try:
+        map.update_groups()
+        message_text = 'Список групп успешно обновлён'
+    except: message_text = 'Ошибка обновления списка'
+    bot.send_message(message.chat.id, message_text)
+    log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
+
+@bot.message_handler(commands=['teach'])
+def go_group(message):
+    try:
+        map.update_teachers()
+        message_text = 'Список преподавателей успешно обновлён'
+    except: message_text = 'Ошибка обновления списка'
     bot.send_message(message.chat.id, message_text)
     log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
 
@@ -91,6 +110,14 @@ def get_next_day_data(message):
     schedule_date(next_date, message)
 
 
+@bot.message_handler(commands=['стоп'])
+def stop_msg(message):
+    print('Протокол "пока"')
+    message_text = "Ня, пока"
+    bot.send_message(message.chat.id, message_text)
+    log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
+    bot.stop_bot()
+
 @bot.message_handler(commands=['Ксюша'])
 def ksenia_msg(message):
     print('Отправляю 962847585')
@@ -100,18 +127,12 @@ def ksenia_msg(message):
     bot.send_message(message.chat.id, message_text)
     log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
 
-
-@bot.message_handler(commands=['стоп'])
-def stop_msg(message):
-    print('Протокол "пока"')
-    message_text = "Ня, пока"
-    bot.send_message(message.chat.id, message_text)
-    log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
-    bot.stop_bot()
-
 @bot.message_handler()
 def all_message(message):
     log(message.chat.id, message.from_user.first_name, message.from_user.username, message.text, message_text)
 
 bot.polling()
+
+
+
 

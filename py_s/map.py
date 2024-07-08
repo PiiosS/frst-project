@@ -9,8 +9,8 @@ def del_sign(text):
 def conn():
     return pymysql.connect(host=sdata.HOST, user=sdata.USER, password=sdata.PASSWORD, database=sdata.DATABASE)
 def schedule():
-    url = "https://api.xn--80aai1dk.xn--p1ai/api/schedule?range=1"  #&subdivision_cod=1&group_name=5134"
-
+    #url = "https://api.xn--80aai1dk.xn--p1ai/api/schedule?range=1"  #&subdivision_cod=1&group_name=5134"
+    url = "https://api.xn--80aai1dk.xn--p1ai/api/schedule?range=4&date_from=2024-07-01&date_to=2024-07-07"
     PAIR_TIMES = {
         '1': '08:30-10:00',
         '2': '10:15-11:45',
@@ -42,7 +42,9 @@ def schedule():
         group_name = del_sign(schedule['group_name'].strip())
 
         insert_query = f"""
-                INSERT INTO `schedule`(`sdate`, `pair`, `subject`, `signature`, `classroom`, `classroom_building`, `group_name`) VALUES ("{DATE}","{pair}","{subject}","{signature}","{classroom}","{classroom_building}","{group_name}")
+                INSERT INTO `schedule`
+                (`sdate`, `pair`, `subject`, `signature`, `classroom`, `classroom_building`, `group_name`)
+                VALUES ("{DATE}","{pair}","{subject}","{signature}","{classroom}","{classroom_building}","{group_name}")
                 """
         connection = conn()
         cursor = connection.cursor()
@@ -51,5 +53,55 @@ def schedule():
 
         connection.commit()
     connection.close()
-x=1+1
+
+
+def update_teachers():
+    connection = conn()
+    cursor = connection.cursor()
+    cursor.execute("""TRUNCATE TABLE teachers""")
+
+    s_code = [1,2,3,4,101,201]
+    for sc in s_code:
+        url = f"https://api.xn--80aai1dk.xn--p1ai/api/teachers?subdivision_cod={sc}&date_from=2024-07-01&date_to=2024-07-07"
+        response = requests.get(url)
+        data = response.json()
+        print(f': {response.status_code} ({len(data)})')
+        for tc in data:
+
+            t_id = tc["id"]
+            sub_code = sc
+            t_FIO = del_sign(tc["title"].strip())
+            insert_query=f"""
+                INSERT INTO `teachers`(`t_id`, `sub_code`, `t_FIO`) VALUES ('{t_id}', '{sub_code}', '{t_FIO}')
+                """
+            cursor.execute(insert_query)
+        connection.commit()
+    connection.close()
+
+def update_groups():
+    connection = conn()
+    cursor = connection.cursor()
+    cursor.execute("""TRUNCATE TABLE a_group""")
+
+    s_code = [1,2,3,4,101,201]
+
+    for sc in s_code:
+        url = f"https://api.xn--80aai1dk.xn--p1ai/api/groups?subdivision_cod={sc}&date_from=2024-07-01&date_to=2024-07-07"
+        response = requests.get(url)
+        data = response.json()
+        print(f': {response.status_code} ({len(data)})')
+        for gr in data:
+            g_id = gr["id"]
+            sub_code = sc
+            g_name = del_sign(gr["title"].strip())
+            insert_query=f"""
+                INSERT INTO `a_group`
+                (`g_id`, `sub_code`, `group_name`) VALUES ('{g_id}', '{sub_code}', '{g_name}')
+                """
+            cursor.execute(insert_query)
+        connection.commit()
+    connection.close()
+
+
+
 #schedule()
